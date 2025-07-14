@@ -2,18 +2,26 @@ import { redirect } from 'next/navigation'
 
 import { stripe } from '../../lib/stripe'
 
-export default async function Return({ searchParams }) {
+interface SearchParams {
+  session_id?: string
+}
+
+interface PageProps {
+  searchParams: Promise<SearchParams>
+}
+
+export default async function Return({ searchParams }: PageProps) {
   const { session_id } = await searchParams
 
   if (!session_id)
     throw new Error('Please provide a valid session_id (`cs_test_...`)')
 
-  const {
-    status,
-    customer_details: { email: customerEmail }
-  } = await stripe.checkout.sessions.retrieve(session_id, {
+  const session = await stripe.checkout.sessions.retrieve(session_id, {
     expand: ['line_items', 'payment_intent']
   })
+
+  const { status, customer_details } = session
+  const customerEmail = customer_details?.email
 
   if (status === 'open') {
     return redirect('/')
@@ -25,9 +33,15 @@ export default async function Return({ searchParams }) {
         <p>
           We appreciate your business! A confirmation email will be sent to{' '}
           {customerEmail}. If you have any questions, please email{' '}
+          <a href="mailto:orders@example.com">orders@example.com</a>.
         </p>
-        <a href="mailto:orders@example.com">orders@example.com</a>.
       </section>
     )
   }
+
+  return (
+    <div>
+      <p>Something went wrong. Please contact support.</p>
+    </div>
+  )
 }
