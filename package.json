@@ -8,15 +8,23 @@
     "start": "next start",
     "lint": "next lint",
     "migrate": "npx prisma migrate dev --name",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:reset": "npx prisma migrate reset --force",
+    "db:push": "npx prisma db push",
+    "db:studio": "npx prisma studio",
+    "db:generate": "npx prisma generate",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
     "@prisma/extension-accelerate": "^2.0.2",
+    "@stripe/react-stripe-js": "^3.7.0",
+    "@stripe/stripe-js": "^7.4.0",
     "next": "15.3.5",
     "prisma": "^6.11.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "stripe": "^18.3.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
